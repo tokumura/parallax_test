@@ -1,0 +1,102 @@
+<div id="scrollValue"></div>
+<a href="javascript:rewrite()">rewrite</a>
+<canvas id="sample1" style="background-color:#ffffff;">
+</canvas>
+
+
+
+<script type="text/javascript">
+<!--
+
+var canvas, b, d
+var context;
+var centerX, centerY;
+var tate;
+var yoko;
+var sclv;
+
+$(function() {
+  $(window).scroll(function() {
+    setCenterXY();
+    sclv = $(this).scrollTop();  //スクロール値を取得
+    $('#scrollValue').text(value);
+    canvas.height = 4000;
+    draw_all(sclv);
+    if (canvas.getContext) {
+      context.beginPath();
+      context.arc((screen.availWidth / 2), $(window).scrollTop()+340, 10, Math.PI*2, false);
+      context.fill();
+    }
+    /*
+    */
+  });
+});
+
+function draw(x, y, tate, yoko, scroll) {
+  if (canvas.getContext) {
+    context.globalAlpha = 0.2;
+    context.fillRect(x,y,tate,yoko); 
+    context.fill();
+  }
+}
+
+function init(){
+  canvas = document.getElementById('sample1');
+  canvas.height = 4000;
+  context = canvas.getContext('2d');
+  b = document.body;
+  d = document.documentElement;
+  canvas.width = Math.max(b.clientWidth , b.scrollWidth, d.scrollWidth, d.clientWidth);
+
+  centerX = (screen.availWidth - 150) / 2;
+  centerY = $(window).scrollTop() + 250;
+  draw_all();
+
+  
+}
+
+function draw_all() {
+  var x,y;
+  tate = 160;
+  yoko = 160;
+  x = 30;
+  y = 350;
+  for (k = 0; k < 7; k++) {
+    layer(x, y, tate, yoko);
+    x = x + 20;
+    y = y + 5;
+    tate = tate - 10;
+    yoko = yoko - 10;
+  }
+  /*
+  */
+
+}
+
+function layer(x,y,tate,yoko) {
+  var y_init = y;
+  for (i = 0; i < 5; i++) {
+    // ここでオフセット的な
+    for (j = 0; j < 10; j++) {
+      draw(x, y, tate, yoko, 0);
+      y = y + 200;
+    }
+    y = y_init;
+    x = x + 300;
+  }
+}
+
+window.onload = function() {
+  setCenterXY();
+  init();
+}
+
+function setCenterXY(){
+  //centerX = (screen.availWidth - 150) / 2;
+  //centerY = $(window).scrollTop() + 250;
+  centerX = screen.availWidth / 2;
+  centerY = $(window).scrollTop() + 340;
+
+}
+// -->
+</script>
