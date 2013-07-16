@@ -19,7 +19,7 @@ $(function() {
   $(window).scroll(function() {
     setCenterXY();
     sclv = $(this).scrollTop();  //スクロール値を取得
-    $('#scrollValue').text(value);
+    $('#scrollValue').text(sclv);
     canvas.height = 4000;
     draw_all(sclv);
     if (canvas.getContext) {

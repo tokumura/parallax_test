@@ -16,4 +16,10 @@ class ParallaxController < ApplicationController
       format.html
     end
   end
+
+  def test4
+    respond_to do |format|
+      format.html
+    end
+  end
 end
