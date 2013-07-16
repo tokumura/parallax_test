@@ -1,102 +1,119 @@
 <div id="scrollValue"></div>
-<a href="javascript:rewrite()">rewrite</a>
+<div id="center"></div>
 <canvas id="sample1" style="background-color:#ffffff;">
 </canvas>
-
-
 
 <script type="text/javascript">
 <!--
 
-var canvas, b, d
-var context;
-var centerX, centerY;
-var tate;
-var yoko;
-var sclv;
+var canvas, context, b, d;
+var centerX, centerY, scroll;
+var boxsize;
+var list_y_adj;
+var list_x_adj;
 
-$(function() {
-  $(window).scroll(function() {
-    setCenterXY();
-    sclv = $(this).scrollTop();  //スクロール値を取得
-    $('#scrollValue').text(sclv);
-    canvas.height = 4000;
-    draw_all(sclv);
-    if (canvas.getContext) {
-      context.beginPath();
-      context.arc((screen.availWidth / 2), $(window).scrollTop()+340, 10, Math.PI*2, false);
-      context.fill();
-    }
-    /*
-    */
-  });
-});
-
-function draw(x, y, tate, yoko, scroll) {
-  if (canvas.getContext) {
-    context.globalAlpha = 0.2;
-    context.fillRect(x,y,tate,yoko); 
-    context.fill();
-  }
+window.onload = function() {
+  setCenter();
+  init();
 }
 
-function init(){
+function init() {
   canvas = document.getElementById('sample1');
   canvas.height = 4000;
   context = canvas.getContext('2d');
   b = document.body;
   d = document.documentElement;
   canvas.width = Math.max(b.clientWidth , b.scrollWidth, d.scrollWidth, d.clientWidth);
-
-  centerX = (screen.availWidth - 150) / 2;
-  centerY = $(window).scrollTop() + 250;
-  draw_all();
-
-  
-}
-
-function draw_all() {
-  var x,y;
-  tate = 160;
-  yoko = 160;
-  x = 30;
-  y = 350;
-  for (k = 0; k < 7; k++) {
-    layer(x, y, tate, yoko);
-    x = x + 20;
-    y = y + 5;
-    tate = tate - 10;
-    yoko = yoko - 10;
+  boxsize = 170;
+  scroll = 0;
+  list_y_adj = new Array(0, 20, 10, 7, 6, 5, 4);
+  list_x_adj = new Array(24, 12, 0, -12, -24);
+  dot();
+  for (l = 0; l < 7; l++) {
+    layer(l);
   }
-  /*
-  */
-
 }
 
-function layer(x,y,tate,yoko) {
-  var y_init = y;
-  for (i = 0; i < 5; i++) {
-    // ここでオフセット的な
-    for (j = 0; j < 10; j++) {
-      draw(x, y, tate, yoko, 0);
-      y = y + 200;
+function draw(x, y, scroll, size) {
+  if (canvas.getContext) {
+    context.globalAlpha = 0.2;
+    context.fillRect(x, y+scroll, size, size); 
+    context.fill();
+  }
+}
+
+function layer(layNum){
+  var x,y,adjY,adjusted,abs;
+  var startPoint;
+  var layBoxSize;;
+
+  for (h=0; h<5; h++){
+    startPoint = 85 - (layNum * 4);
+    layBoxSize = boxsize - (8 * (layNum + 1));
+
+    // 四角形の左上
+    x = centerX - startPoint;
+    if (h==0) {
+      x = x - 600
+    } else if (h==1) {
+      x = x - 300
+    } else if (h==2) {
+      x = x - 0
+    } else if (h==3) {
+      x = x + 300
+    } else if (h==4) {
+      x = x + 600
     }
-    y = y_init;
-    x = x + 300;
+    y = centerY - startPoint - scroll;
+
+    adjusted = 0;
+    for (i=0; i<10; i++){
+      if (layNum > 0) {
+        abs = centerY - y - startPoint;
+        adjY = Math.floor(Math.abs(abs) / list_y_adj[layNum]);
+
+        if ((y + startPoint) < centerY){
+          adjusted = y + adjY;
+        } else if ((y + startPoint) > centerY) {
+          adjusted = y - adjY;
+        } else if (y + startPoint == centerY){
+          adjusted = y;
+        }
+      } else {
+        adjusted = y;
+      }
+      draw(x + layNum * list_x_adj[h], adjusted, 0, layBoxSize);
+      y = y + 300;
+    }
   }
 }
 
-window.onload = function() {
-  setCenterXY();
-  init();
-}
+$(function() {
+  $(window).scroll(function() {
+    setCenter();
+    scroll = $(this).scrollTop();
+    $('#scrollValue').text($(this).scrollTop());
+    $('#center').text(centerX + ", " + centerY);
+    canvas.height = 4000;
+    dot();
+    for (l = 0; l < 7; l++) {
+      layer(l);
+    }
+  });
+});
 
-function setCenterXY(){
-  //centerX = (screen.availWidth - 150) / 2;
-  //centerY = $(window).scrollTop() + 250;
-  centerX = screen.availWidth / 2;
+function setCenter(){
+  centerX = $(window).width() / 2;
   centerY = $(window).scrollTop() + 340;
-
 }
+
+function dot() {
+  if (canvas.getContext) {
+    context.beginPath();
+    context.arc(centerX, centerY, 3, Math.PI*2, false);
+    context.fill();
+  }
+}
+
 // -->
 </script>

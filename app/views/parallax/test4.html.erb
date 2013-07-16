@@ -11,6 +11,7 @@
 var canvas, context, b, d;
 var centerX, centerY, scroll;
 var boxsize;
+var list_adj;
 
 window.onload = function() {
   setCenter();
@@ -26,7 +27,10 @@ function init() {
   canvas.width = Math.max(b.clientWidth , b.scrollWidth, d.scrollWidth, d.clientWidth);
   boxsize = 170;
   scroll = 0;
+  list_adj = new Array(0, 20, 10, 7, 6, 5.5, 4.7);
+
   dot();
+  /*
   layer_1();
   layer_2();
   layer_3();
@@ -34,6 +38,10 @@ function init() {
   layer_5();
   layer_6();
   layer_7();
+  */
+  for (l = 0; l < 7; l++) {
+    layer(l);
+  }
 }
 
 function draw(x, y, scroll, size) {
@@ -41,6 +49,66 @@ function draw(x, y, scroll, size) {
     context.globalAlpha = 0.2;
     context.fillRect(x, y+scroll, size, size); 
     context.fill();
+  }
+}
+
+function layer(layNum){
+  var x,y,adjY,adjusted,abs;
+  var startPoint;
+  var layBoxSize;;
+
+  for (h=0; h<5; h++){
+    startPoint = 85 - (layNum * 4);
+    layBoxSize = boxsize - (8 * (layNum + 1));
+
+
+    // 四角形の左上
+    x = centerX - startPoint;
+    if (h==0) {
+      x = x - 600
+    } else if (h==1) {
+      x = x - 300
+    } else if (h==2) {
+      x = x - 0
+    } else if (h==3) {
+      x = x + 300
+    } else if (h==4) {
+      x = x + 600
+    }
+    y = centerY - startPoint - scroll;
+
+    adjusted = 0;
+    for (i=0; i<10; i++){
+      if (layNum > 0) {
+        abs = centerY - y - startPoint;
+        adjY = Math.floor(Math.abs(abs) / list_adj[layNum]);
+
+        if ((y + startPoint) < centerY){
+          adjusted = y + adjY;
+        } else if ((y + startPoint) > centerY) {
+          adjusted = y - adjY;
+        } else if (y + startPoint == centerY){
+          adjusted = y;
+        }
+      } else {
+        adjusted = y;
+      }
+
+      var x_adj;
+      if (h==0) {
+        x_adj = 20;
+      } else if (h==1) {
+        x_adj = 10;
+      } else if (h==2) {
+        x_adj = 0;
+      } else if (h==3) {
+        x_adj = -10;
+      } else if (h==4) {
+        x_adj = -20;
+      }
+      draw(x+layNum*x_adj, adjusted, 0, layBoxSize);
+      y = y + 300;
+    }
   }
 }
 
@@ -282,6 +350,10 @@ $(function() {
     $('#center').text(centerX + ", " + centerY);
     canvas.height = 4000;
     dot();
+    for (l = 0; l < 7; l++) {
+      layer(l);
+    }
+    /*
     layer_1();
     layer_2();
     layer_3();
@@ -289,6 +361,7 @@ $(function() {
     layer_5();
     layer_6();
     layer_7();
+    */
     //context.fillText(scroll, 30, centerY)
     //context.fillText(centerY, 60, centerY)
   });
